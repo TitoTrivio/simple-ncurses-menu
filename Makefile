@@ -32,12 +32,12 @@ SRC_FILES := $(foreach D,$(SRC_DIRS),$(wildcard $(D)/*.c))
 OBJ_FILES := $(patsubst %.c,$(BUILD_DIR)/%.o,$(SRC_FILES))
 DEP_FILES := $(patsubst %.c,$(BUILD_DIR)/%.d,$(SRC_FILES))
 
-THIRD_PARTY_LIBRARIES := ncurses
+EXTERNAL_LIBRARIES := ncurses
 
 # Flags
 
 INC_FLAGS  := $(foreach D,$(SRC_DIRS),-I$(D))
-LIB_FLAGS  := $(foreach LIB,$(THIRD_PARTY_LIBRARIES),-l$(LIB))
+LIB_FLAGS  := $(foreach LIB,$(EXTERNAL_LIBRARIES),-l$(LIB))
 DEP_FLAGS  := -MMD -MP
 C_STANDARD := -std=c23
 WARN_FLAGS := \
