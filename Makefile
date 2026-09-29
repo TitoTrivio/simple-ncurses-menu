@@ -36,9 +36,9 @@ THIRD_PARTY_LIBRARIES := ncurses
 
 # Flags
 
-INC_FLAGS := $(foreach D,$(SRC_DIRS),-I$(D))
-LIB_FLAGS := $(foreach LIB,$(THIRD_PARTY_LIBRARIES),-l$(LIB))
-DEP_FLAGS := -MMD -MP
+INC_FLAGS  := $(foreach D,$(SRC_DIRS),-I$(D))
+LIB_FLAGS  := $(foreach LIB,$(THIRD_PARTY_LIBRARIES),-l$(LIB))
+DEP_FLAGS  := -MMD -MP
 C_STANDARD := -std=c23
 WARN_FLAGS := \
     -Wall \
