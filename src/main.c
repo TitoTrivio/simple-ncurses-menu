@@ -10,6 +10,9 @@ int main()
 
     // disable line buffer but keep control character processing
     cbreak();
+
+    // turn cursor invisible
+    curs_set(0);
     
     // create main window with custom function
     const int kmain_window_height = 15; // lines
