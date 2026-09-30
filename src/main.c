@@ -16,7 +16,7 @@ int main()
     // disable line buffer but keep control character processing
     cbreak();
     
-    // create the main window
+    // my custom function to create the main window
     create_main_window(main_window, kmain_window_height, kmain_window_width); 
 
     getch();
