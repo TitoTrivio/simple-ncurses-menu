@@ -15,6 +15,8 @@ void create_main_window(WINDOW *win, int height, int width)
     start_x = (max_x / 2) - (width / 2);
 
     win = newwin(height, width, start_y, start_x);
+
+    // refresh stdscr to show the newly created window
     refresh();
 
     // draw borders around the main window
@@ -22,12 +24,14 @@ void create_main_window(WINDOW *win, int height, int width)
     
     // print header on main window
     print_main_header(win);
+
+    // refresh window to show updates
+    wrefresh(win);
 }
 
 void draw_main_borders(WINDOW *win)
 {
     box(win, 0, 0);
-    wrefresh(win);
 }
 
 void print_main_header(WINDOW *win)
@@ -36,6 +40,5 @@ void print_main_header(WINDOW *win)
     size_t header_length = strlen(header_text);
 
     mvwprintw(win, 1, header_length / 2, "%s", header_text);
-    wrefresh(win);
 }
 
