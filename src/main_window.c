@@ -2,9 +2,9 @@
 #include <string.h>
 
 const char *menu_options[] = {
-    "1 - One",
-    "2 - Two",
-    "3 - Three"
+    "- One",
+    "- Two",
+    "- Exit"
 };
 
 size_t n_options = sizeof(menu_options) / sizeof(char *);
@@ -41,10 +41,10 @@ void main_window_initialize(MainWindow *mw, WINDOW *parent_window, int height, i
     const char* header_text = "SIMPLE NCURSES MENU";
     size_t header_length = strlen(header_text);
 
-    mvwprintw(mw->window, 1, header_length / 2, "%s", header_text);
+    mvwprintw(mw->window, 1, (width / 2) - (header_length / 2), "%s", header_text);
 
-    // temporary message
-    mvwprintw(mw->window, height - 2, 1, "%s", "Move with arrows. Press \'q\' to exit.");
+    // print instructions on main window
+    mvwprintw(mw->window, 3, 1, "%s", "Move with arrows. Press ENTER to select.");
 
     // refresh window to show updates
     wrefresh(mw->window);
@@ -55,13 +55,13 @@ void main_window_loop(MainWindow *mw)
     int c = '\0';
     size_t menu_index = 0;
 
-    while (c != 'q')
+    while (true)
     {
-        print_menu(mw, 3, 1, menu_index);
+        print_menu(mw, 5, 1, menu_index);
 
         c = wgetch(mw->window);
 
-        switch(c)
+        switch (c)
         {
             case KEY_UP:
                 if (menu_index == 0)
@@ -74,6 +74,16 @@ void main_window_loop(MainWindow *mw)
                     menu_index = 0;
                 else
                     ++menu_index;
+                break;
+
+            case '\n':
+            case KEY_ENTER:
+                switch (menu_index)
+                {
+                    case 2:
+                        return;
+                }
+
                 break;
         }
     }

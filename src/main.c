@@ -16,7 +16,7 @@ int main()
     
     // create main window with custom function
     const int kmain_window_height = 15; // lines
-    const int kmain_window_width  = 40; // columns
+    const int kmain_window_width  = 45; // columns
 
     MainWindow main_window;
 
