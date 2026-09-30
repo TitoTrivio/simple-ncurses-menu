@@ -1,9 +1,6 @@
 #include "main_window.h"
 #include <string.h>
 
-void draw_main_borders(WINDOW *win);
-void print_main_header(WINDOW *win);
-
 void create_main_window(WINDOW *win, int height, int width)
 {
     int max_y, max_x, start_y, start_x;
@@ -20,25 +17,15 @@ void create_main_window(WINDOW *win, int height, int width)
     refresh();
 
     // draw borders around the main window
-    draw_main_borders(win);
+    box(win, 0, 0);
     
     // print header on main window
-    print_main_header(win);
-
-    // refresh window to show updates
-    wrefresh(win);
-}
-
-void draw_main_borders(WINDOW *win)
-{
-    box(win, 0, 0);
-}
-
-void print_main_header(WINDOW *win)
-{
     const char* header_text = "SIMPLE NCURSES MENU";
     size_t header_length = strlen(header_text);
 
     mvwprintw(win, 1, header_length / 2, "%s", header_text);
+
+    // refresh window to show updates
+    wrefresh(win);
 }
 
