@@ -3,7 +3,8 @@
 
 #include <ncurses.h>
 
-void create_main_window(WINDOW *win, int height, int width);
+WINDOW *create_main_window(int height, int width);
+void destroy_main_window(WINDOW *win);
 
 #endif
 
