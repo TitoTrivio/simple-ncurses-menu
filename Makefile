@@ -32,7 +32,7 @@ SRC_FILES := $(foreach D,$(SRC_DIRS),$(wildcard $(D)/*.c))
 OBJ_FILES := $(patsubst %.c,$(BUILD_DIR)/%.o,$(SRC_FILES))
 DEP_FILES := $(patsubst %.c,$(BUILD_DIR)/%.d,$(SRC_FILES))
 
-EXTERNAL_LIBRARIES := ncurses
+EXTERNAL_LIBRARIES := ncurses tinfo
 
 # Flags
 
