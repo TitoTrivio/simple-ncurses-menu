@@ -7,22 +7,27 @@ const char *menu_options[] = {
     "3 - Three"
 };
 
+size_t n_options = sizeof(menu_options) / sizeof(char *);
+
 void print_menu(WINDOW *win, int start_y, int start_x, size_t index);
 
 WINDOW *create_main_window(int height, int width)
 {
-    int max_y, max_x, start_y, start_x;
+    int terminal_max_y, terminal_max_x, start_y, start_x;
 
-    getmaxyx(stdscr, max_y, max_x);
+    getmaxyx(stdscr, terminal_max_y, terminal_max_x);
 
     // draw window in the center of the terminal
-    start_y = (max_y / 2) - (height / 2);
-    start_x = (max_x / 2) - (width / 2);
+    start_y = (terminal_max_y / 2) - (height / 2);
+    start_x = (terminal_max_x / 2) - (width / 2);
     
     WINDOW *win = newwin(height, width, start_y, start_x);
 
     // refresh stdscr to show the newly created window
     refresh();
+
+    // enable reading function keys
+    keypad(win, true);
 
     // draw borders around the main window
     box(win, 0, 0);
@@ -33,30 +38,46 @@ WINDOW *create_main_window(int height, int width)
 
     mvwprintw(win, 1, header_length / 2, "%s", header_text);
 
+    int max_y, max_x;
+
+    getmaxyx(win, max_y, max_x);
+
+    // temporary message
+    mvwprintw(win, max_y - 2, 1, "%s", "Move with arrows. Press \'q\' to exit.");
+
     // refresh window to show updates
     wrefresh(win);
 
-    print_menu(win, 3, 1, 0);
     return win;
 }
 
-void print_menu(WINDOW *win, int start_y, int start_x, size_t index)
+void main_window_loop(WINDOW *win)
 {
-   size_t n_options = sizeof(menu_options) / sizeof(char *);
+    int c = '\0';
+    size_t menu_index = 0;
 
-   for (size_t i = 0; i < n_options; ++i)
-   {
-       if (index == i)
+    while (c != 'q')
+    {
+        print_menu(win, 3, 1, menu_index);
+
+        c = wgetch(win);
+
+        switch(c)
         {
-            wattron(win, A_REVERSE);
-            mvwprintw(win, i + start_y, start_x, "%s", menu_options[i]);
-            wattroff(win, A_REVERSE);
+            case KEY_UP:
+                if (menu_index == 0)
+                    menu_index = n_options - 1;
+                else
+                    --menu_index;
+                break;
+            case KEY_DOWN:
+                if (menu_index == n_options - 1)
+                    menu_index = 0;
+                else
+                    ++menu_index;
+                break;
         }
-       else
-           mvwprintw(win, i + start_y, start_x, "%s", menu_options[i]);
-   }
-
-   wrefresh(win);
+    }
 }
 
 void destroy_main_window(WINDOW *win)
@@ -71,5 +92,22 @@ void destroy_main_window(WINDOW *win)
 
     wrefresh(win);
     delwin(win);
+}
+
+void print_menu(WINDOW *win, int start_y, int start_x, size_t index)
+{
+   for (size_t i = 0; i < n_options; ++i)
+   {
+       if (index == i)
+        {
+            wattron(win, A_REVERSE);
+            mvwprintw(win, i + start_y, start_x, "%s", menu_options[i]);
+            wattroff(win, A_REVERSE);
+        }
+       else
+           mvwprintw(win, i + start_y, start_x, "%s", menu_options[i]);
+   }
+
+   wrefresh(win);
 }
 

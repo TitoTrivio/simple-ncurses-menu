@@ -20,7 +20,7 @@ int main()
 
     WINDOW *main_window = create_main_window(kmain_window_height, kmain_window_width); 
 
-    getch();
+    main_window_loop(main_window);
 
     destroy_main_window(main_window);
 
