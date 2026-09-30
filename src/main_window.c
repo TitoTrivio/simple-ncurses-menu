@@ -9,58 +9,57 @@ const char *menu_options[] = {
 
 size_t n_options = sizeof(menu_options) / sizeof(char *);
 
-void print_menu(WINDOW *win, int start_y, int start_x, size_t index);
+void print_menu(MainWindow *mw, int start_y, int start_x, size_t index);
 
-WINDOW *create_main_window(int height, int width)
+void main_window_initialize(MainWindow *mw, WINDOW *parent_window, int height, int width)
 {
-    int terminal_max_y, terminal_max_x, start_y, start_x;
+    mw->window = NULL;
+    mw->parent_window = parent_window;
+    mw->height = height;
+    mw->width = width;
+    
+    int parent_max_y, parent_max_x, start_y, start_x;
 
-    getmaxyx(stdscr, terminal_max_y, terminal_max_x);
+    getmaxyx(parent_window, parent_max_y, parent_max_x);
 
     // draw window in the center of the terminal
-    start_y = (terminal_max_y / 2) - (height / 2);
-    start_x = (terminal_max_x / 2) - (width / 2);
+    start_y = (parent_max_y / 2) - (height / 2);
+    start_x = (parent_max_x / 2) - (width / 2);
     
-    WINDOW *win = newwin(height, width, start_y, start_x);
+    mw->window = newwin(height, width, start_y, start_x);
 
     // refresh stdscr to show the newly created window
-    refresh();
+    wrefresh(parent_window);
 
     // enable reading function keys
-    keypad(win, true);
+    keypad(mw->window, true);
 
     // draw borders around the main window
-    box(win, 0, 0);
+    box(mw->window, 0, 0);
     
     // print header on main window
     const char* header_text = "SIMPLE NCURSES MENU";
     size_t header_length = strlen(header_text);
 
-    mvwprintw(win, 1, header_length / 2, "%s", header_text);
-
-    int max_y, max_x;
-
-    getmaxyx(win, max_y, max_x);
+    mvwprintw(mw->window, 1, header_length / 2, "%s", header_text);
 
     // temporary message
-    mvwprintw(win, max_y - 2, 1, "%s", "Move with arrows. Press \'q\' to exit.");
+    mvwprintw(mw->window, height - 2, 1, "%s", "Move with arrows. Press \'q\' to exit.");
 
     // refresh window to show updates
-    wrefresh(win);
-
-    return win;
+    wrefresh(mw->window);
 }
 
-void main_window_loop(WINDOW *win)
+void main_window_loop(MainWindow *mw)
 {
     int c = '\0';
     size_t menu_index = 0;
 
     while (c != 'q')
     {
-        print_menu(win, 3, 1, menu_index);
+        print_menu(mw, 3, 1, menu_index);
 
-        c = wgetch(win);
+        c = wgetch(mw->window);
 
         switch(c)
         {
@@ -80,34 +79,38 @@ void main_window_loop(WINDOW *win)
     }
 }
 
-void destroy_main_window(WINDOW *win)
+void main_window_finalize(MainWindow *mw)
 {
-    int max_y, max_x;
+    if (mw->window)
+    {
+        for (int i = 0; i < mw->height; ++i)
+            for (int j = 0; j < mw->width; ++j)
+                mvwaddch(mw->window, i, j, ' ');
 
-    getmaxyx(win, max_y, max_x);
+        wrefresh(mw->window);
+        delwin(mw->window);
+    }
 
-    for (int i = 0; i < max_y; ++i)
-        for (int j = 0; j < max_x; ++j)
-            mvwaddch(win, i, j, ' ');
-
-    wrefresh(win);
-    delwin(win);
+    mw->window = NULL;
+    mw->parent_window = NULL;
+    mw->height = 0;
+    mw->width = 0;
 }
 
-void print_menu(WINDOW *win, int start_y, int start_x, size_t index)
+void print_menu(MainWindow *mw, int start_y, int start_x, size_t index)
 {
    for (size_t i = 0; i < n_options; ++i)
    {
        if (index == i)
         {
-            wattron(win, A_REVERSE);
-            mvwprintw(win, i + start_y, start_x, "%s", menu_options[i]);
-            wattroff(win, A_REVERSE);
+            wattron(mw->window, A_REVERSE);
+            mvwprintw(mw->window, i + start_y, start_x, "%s", menu_options[i]);
+            wattroff(mw->window, A_REVERSE);
         }
        else
-           mvwprintw(win, i + start_y, start_x, "%s", menu_options[i]);
+           mvwprintw(mw->window, i + start_y, start_x, "%s", menu_options[i]);
    }
 
-   wrefresh(win);
+   wrefresh(mw->window);
 }
 

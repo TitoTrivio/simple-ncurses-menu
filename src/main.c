@@ -18,11 +18,13 @@ int main()
     const int kmain_window_height = 15; // lines
     const int kmain_window_width  = 40; // columns
 
-    WINDOW *main_window = create_main_window(kmain_window_height, kmain_window_width); 
+    MainWindow main_window;
 
-    main_window_loop(main_window);
+    main_window_initialize(&main_window, stdscr, kmain_window_height, kmain_window_width); 
 
-    destroy_main_window(main_window);
+    main_window_loop(&main_window);
+
+    main_window_finalize(&main_window);
 
     // end curses mode
     endwin();
