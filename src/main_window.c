@@ -11,25 +11,24 @@ size_t n_options = sizeof(menu_options) / sizeof(char *);
 
 void print_menu(MainWindow *mw, int start_y, int start_x, size_t index);
 
-void main_window_initialize(MainWindow *mw, WINDOW *parent_window, int height, int width)
+void main_window_initialize(MainWindow *mw, int height, int width)
 {
     mw->window = NULL;
-    mw->parent_window = parent_window;
     mw->height = height;
     mw->width = width;
     
-    int parent_max_y, parent_max_x, start_y, start_x;
+    int terminal_max_y, terminal_max_x, start_y, start_x;
 
-    getmaxyx(parent_window, parent_max_y, parent_max_x);
+    getmaxyx(stdscr, terminal_max_y, terminal_max_x);
 
     // draw window in the center of the terminal
-    start_y = (parent_max_y / 2) - (height / 2);
-    start_x = (parent_max_x / 2) - (width / 2);
+    start_y = (terminal_max_y / 2) - (height / 2);
+    start_x = (terminal_max_x / 2) - (width / 2);
     
     mw->window = newwin(height, width, start_y, start_x);
 
     // refresh stdscr to show the newly created window
-    wrefresh(parent_window);
+    wrefresh(stdscr);
 
     // enable reading function keys
     keypad(mw->window, true);
@@ -102,7 +101,6 @@ void main_window_finalize(MainWindow *mw)
     }
 
     mw->window = NULL;
-    mw->parent_window = NULL;
     mw->height = 0;
     mw->width = 0;
 }

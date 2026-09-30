@@ -20,7 +20,7 @@ int main()
 
     MainWindow main_window;
 
-    main_window_initialize(&main_window, stdscr, kmain_window_height, kmain_window_width); 
+    main_window_initialize(&main_window, kmain_window_height, kmain_window_width); 
 
     main_window_loop(&main_window);
 

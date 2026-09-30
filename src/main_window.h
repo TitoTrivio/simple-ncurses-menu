@@ -6,12 +6,11 @@
 typedef struct MainWindow
 {
     WINDOW *window;
-    WINDOW *parent_window;
     int height;
     int width;
 } MainWindow;
 
-void main_window_initialize(MainWindow *mw, WINDOW *parent_window, int height, int width);
+void main_window_initialize(MainWindow *mw, int height, int width);
 void main_window_loop(MainWindow *mw);
 void main_window_finalize(MainWindow *mw);
 
