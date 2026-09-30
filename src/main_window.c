@@ -1,6 +1,9 @@
 #include "main_window.h"
 #include <string.h>
 
+void draw_main_borders(WINDOW *win);
+void print_main_header(WINDOW *win);
+
 void create_main_window(WINDOW *win, int height, int width)
 {
     int max_y, max_x, start_y, start_x;
