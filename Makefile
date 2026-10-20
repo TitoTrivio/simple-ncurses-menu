@@ -39,7 +39,7 @@ EXTERNAL_LIBRARIES := ncurses tinfo
 INC_FLAGS  := $(foreach D,$(SRC_DIRS),-I$(D))
 LIB_FLAGS  := $(foreach LIB,$(EXTERNAL_LIBRARIES),-l$(LIB))
 DEP_FLAGS  := -MMD -MP
-C_STANDARD := -std=c23
+C_STANDARD := -std=c2x
 WARN_FLAGS := \
     -Wall \
     -Wextra \
