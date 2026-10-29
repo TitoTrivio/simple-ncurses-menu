@@ -32,12 +32,9 @@ SRC_FILES := $(foreach D,$(SRC_DIRS),$(wildcard $(D)/*.c))
 OBJ_FILES := $(patsubst %.c,$(BUILD_DIR)/%.o,$(SRC_FILES))
 DEP_FILES := $(patsubst %.c,$(BUILD_DIR)/%.d,$(SRC_FILES))
 
-EXTERNAL_LIBRARIES := ncurses tinfo
-
-# Flags
+# Custom flags
 
 INC_FLAGS  := $(foreach D,$(SRC_DIRS),-I$(D))
-LIB_FLAGS  := $(foreach LIB,$(EXTERNAL_LIBRARIES),-l$(LIB))
 DEP_FLAGS  := -MMD -MP
 C_STANDARD := -std=c2x
 WARN_FLAGS := \
@@ -49,17 +46,20 @@ WARN_FLAGS := \
     -Wstrict-prototypes \
     -Wmissing-prototypes
 
-CPPFLAGS := $(INC_FLAGS) $(DEP_FLAGS)
-CFLAGS   := $(C_STANDARD) $(WARN_FLAGS)
-LDFLAGS  := $(LIB_FLAGS)
-
 ifeq ($(CONFIG), release)
-    CFLAGS += -O2
+    CONFIG_FLAGS += -O2
 else ifeq ($(CONFIG), debug)
-    CFLAGS += -O0 -g
+    CONFIG_FLAGS += -O0 -g
 else
     $(error Invalid CONFIG value: $(CONFIG). Use 'release' or 'debug'.)
 endif
+
+# Implicit flags
+
+CPPFLAGS ?= $(INC_FLAGS) $(DEP_FLAGS)
+CFLAGS   ?= $(C_STANDARD) $(WARN_FLAGS) $(CONFIG_FLAGS)
+LDFLAGS  ?= -DNCURSES_STATIC
+LDLIBS   ?= -lncurses
 
 # Targets
 
@@ -67,11 +67,11 @@ all: $(BINARY)
 
 $(BINARY): $(OBJ_FILES)
 	@mkdir -p $(dir $@)
-	$(CC) -o $@ $^ $(LDFLAGS)
+	$(CC) -o $@ $^ $(LDLIBS) $(LDFLAGS)
 
 $(BUILD_DIR)/%.o: %.c
 	@mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c -o $@ $< $(LDLIBS) $(LDFLAGS)
 
 clean:
 	rm -rf $(BUILD_DIR) $(BIN_DIR)
