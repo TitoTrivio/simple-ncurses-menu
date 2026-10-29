@@ -1,7 +1,7 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
-#include <ncurses.h>
+#include <ncurses/ncurses.h>
 
 typedef struct MainWindow
 {
