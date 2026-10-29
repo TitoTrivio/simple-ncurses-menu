@@ -8,8 +8,7 @@ endif
 
 # Build configuration
 
-CC ?= gcc
-
+CC     ?= gcc
 CONFIG ?= debug
 
 # Project configuration
@@ -32,11 +31,12 @@ SRC_FILES := $(foreach D,$(SRC_DIRS),$(wildcard $(D)/*.c))
 OBJ_FILES := $(patsubst %.c,$(BUILD_DIR)/%.o,$(SRC_FILES))
 DEP_FILES := $(patsubst %.c,$(BUILD_DIR)/%.d,$(SRC_FILES))
 
-# Custom flags
+# Flags
 
 INC_FLAGS  := $(foreach D,$(SRC_DIRS),-I$(D))
 DEP_FLAGS  := -MMD -MP
 C_STANDARD := -std=c2x
+
 WARN_FLAGS := \
     -Wall \
     -Wextra \
@@ -54,29 +54,36 @@ else
     $(error Invalid CONFIG value: $(CONFIG). Use 'release' or 'debug'.)
 endif
 
-# Implicit flags
+DEFAULT_CPPFLAGS := $(INC_FLAGS) $(DEP_FLAGS)
+DEFAULT_CFLAGS   := $(C_STANDARD) $(WARN_FLAGS) $(CONFIG_FLAGS)
+DEFAULT_LDFLAGS  :=
+DEFAULT_LDLIBS   := -lncurses
 
-CPPFLAGS ?= $(INC_FLAGS) $(DEP_FLAGS)
-CFLAGS   ?= $(C_STANDARD) $(WARN_FLAGS) $(CONFIG_FLAGS)
-LDFLAGS  ?= -DNCURSES_STATIC
-LDLIBS   ?= -lncurses
+ifeq ($(DETECTED_OS), Windows_NT)
+    DEFAULT_CPPFLAGS += -DNCURSES_STATIC
+endif
+
+CPPFLAGS ?= $(DEFAULT_CPPFLAGS)
+CFLAGS   ?= $(DEFAULT_CFLAGS)
+LDFLAGS  ?= $(DEFAULT_LDFLAGS)
+LDLIBS   ?= $(DEFAULT_LDLIBS)
 
 # Targets
+
+.PHONY: all clean
 
 all: $(BINARY)
 
 $(BINARY): $(OBJ_FILES)
 	@mkdir -p $(dir $@)
-	$(CC) -o $@ $^ $(LDLIBS) $(LDFLAGS)
+	$(CC) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
 $(BUILD_DIR)/%.o: %.c
 	@mkdir -p $(dir $@)
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c -o $@ $< $(LDLIBS) $(LDFLAGS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
 
 clean:
 	rm -rf $(BUILD_DIR) $(BIN_DIR)
-
-.PHONY: all clean
 
 # Include dependencies
 
