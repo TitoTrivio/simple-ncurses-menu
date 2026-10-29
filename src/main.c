@@ -1,7 +1,7 @@
 #include <ncurses/ncurses.h>
 #include <string.h>
 
-void print_menu(WINDOW *window, int start_y, int start_x, size_t index);
+void print_menu(WINDOW *window, int const start_y, int const start_x, size_t const index);
 void window_loop(WINDOW *window);
 
 int main()
@@ -18,8 +18,8 @@ int main()
 
     // Draw window in the center of the terminal
 
-    const int height = 15; // lines
-    const int width  = 45; // columns
+    int const height = 15; // lines
+    int const width  = 45; // columns
     
     int terminal_max_y, terminal_max_x, window_start_y, window_start_x;
 
@@ -63,15 +63,15 @@ int main()
     return 0;
 }
 
-const char *menu_options[] = {
+char const *menu_options[] = {
     "- One",
     "- Two",
     "- Exit"
 };
 
-const size_t n_options = sizeof(menu_options) / sizeof(char *);
+size_t const n_options = sizeof(menu_options) / sizeof(char *);
 
-void print_menu(WINDOW *window, int start_y, int start_x, size_t index)
+void print_menu(WINDOW *window, int const start_y, int const start_x, size_t const index)
 {
     for (size_t i = 0; i < n_options; ++i)
     {
