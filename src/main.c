@@ -1,7 +1,7 @@
 #include <ncurses/ncurses.h>
 #include <string.h>
 
-void print_menu(WINDOW *window, int const start_y, int const start_x, size_t const index);
+void print_menu(WINDOW *window, int const start_y, int const start_x, char const **menu_options, size_t const n_options, size_t const index);
 void window_loop(WINDOW *window);
 
 int main()
@@ -63,15 +63,7 @@ int main()
     return 0;
 }
 
-char const *menu_options[] = {
-    "- One",
-    "- Two",
-    "- Exit"
-};
-
-size_t const n_options = sizeof(menu_options) / sizeof(char *);
-
-void print_menu(WINDOW *window, int const start_y, int const start_x, size_t const index)
+void print_menu(WINDOW *window, int const start_y, int const start_x, char const **menu_options, size_t const n_options, size_t const index)
 {
     for (size_t i = 0; i < n_options; ++i)
     {
@@ -90,12 +82,20 @@ void print_menu(WINDOW *window, int const start_y, int const start_x, size_t con
 
 void window_loop(WINDOW *window)
 {
+    char const *menu_options[] = {
+        "- One",
+        "- Two",
+        "- Exit"
+    };
+
+    size_t const n_options = sizeof(menu_options) / sizeof(char *);
+
     int c = '\0';
     size_t menu_index = 0;
 
     while (true)
     {
-        print_menu(window, 5, 1, menu_index);
+        print_menu(window, 5, 1, menu_options, n_options, menu_index);
 
         c = wgetch(window);
 
