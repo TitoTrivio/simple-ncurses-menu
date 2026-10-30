@@ -1,4 +1,9 @@
-#include <ncurses/ncurses.h>
+#if defined(_WIN32) || defined(_WIN64)
+    #include <ncurses/ncurses.h>
+#else
+    #include <ncurses.h>
+#endif
+
 #include <string.h>
 
 void print_menu(WINDOW *window, int const start_y, int const start_x, char const **menu_options, size_t const n_options, size_t const index);
